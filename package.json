@@ -45,6 +45,7 @@
     "rehype-stringify": "^7.0.0",
     "remark-parse": "^8.0.2",
     "remark-rehype": "^7.0.0",
+    "svimg": "^0.1.4",
     "unified": "^9.0.0"
   }
 }

@@ -7,6 +7,8 @@ import rehypeSvimg from 'rehype-svimg';
 import html from 'rehype-stringify';
 import fs from 'fs';
 import matter from 'gray-matter';
+import { generateComponentAttributes, ImageProcessingQueue } from 'svimg/dist/process';
+import { join, dirname } from 'path';
 
 // TODO: import RehypeSvimgOptions from rehype-svimg
 interface RehypeSvimgOptions {
@@ -19,6 +21,7 @@ interface RehypeSvimgOptions {
 interface MarkdownSvimgOptions {
     files: string | string[];
     includeImg?: boolean;
+    frontMatterImageKeys?: string[];
     rehypeOptions: RehypeSvimgOptions | ((input: { file: string }) => RehypeSvimgOptions)
 }
 
@@ -26,6 +29,8 @@ export default function markdownSvimg(options: MarkdownSvimgOptions) {
     if (!(options?.files && options.files.length)) {
         throw new Error('Files are required');
     }
+
+    const processingQueue = new ImageProcessingQueue();
 
     return {
         name: 'markdown-svimg',
@@ -55,6 +60,23 @@ export default function markdownSvimg(options: MarkdownSvimgOptions) {
                 });
 
                 await processor.process(data.content);
+
+                if (options?.frontMatterImageKeys?.length) {
+                    for (const key of options.frontMatterImageKeys) {
+                        const image = data.data[key];
+                        if (image) {
+                            await processingQueue.process({
+                                inputFile: join(opts.inputDir, image),
+                                outputDir: join(opts.outputDir, dirname(image)),
+                                options: {
+                                    webp: opts.webp,
+                                    widths: opts && opts.width ? [opts.width] : undefined,
+                                    skipGeneration: false,
+                                }
+                            });
+                        }
+                    }
+                }
             }
         }
     };
