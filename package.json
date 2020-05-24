@@ -1,0 +1,35 @@
+{
+  "name": "rollup-plugin-markdown-svimg",
+  "version": "0.1.0",
+  "private": false,
+  "description": "A rollup plugin for preprocessing images in markdown files with svimg",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "files": [
+    "dist"
+  ],
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c",
+    "watch": "rollup -cw"
+  },
+  "keywords": [
+    "rollup",
+    "rollup-plugin",
+    "markdown",
+    "svimg",
+    "image"
+  ],
+  "author": "Chris Han <christopher.f.han@gmail.com> (chris-han.com)",
+  "homepage": "https://github.com/xiphux/rollup-plugin-markdown-svimg",
+  "bugs": {
+    "url": "https://github.com/xiphux/rollup-plugin-markdown-svimg/issues",
+    "email": "christopher.f.han@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xiphux/rollup-plugin-markdown-svimg.git"
+  },
+  "license": "ISC"
+}
