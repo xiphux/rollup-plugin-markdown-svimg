@@ -1,14 +1,23 @@
 import globby from 'globby';
-import unified from 'unified';
+import unified, { Transformer } from 'unified';
 import markdown from 'remark-parse';
 import remark2rehype from 'remark-rehype';
 import raw from 'rehype-raw';
-import rehypeSvimg from 'rehype-svimg';
 import html from 'rehype-stringify';
 import fs from 'fs';
 import matter from 'gray-matter';
-import { generateComponentAttributes, ImageProcessingQueue } from 'svimg/dist/process';
+import { ImageProcessingQueue } from 'svimg/dist/process';
 import { join, dirname } from 'path';
+import { Node } from 'unist';
+import visit from 'unist-util-visit';
+
+interface ImageNode {
+    type: 'element';
+    tagName: string;
+    properties: {
+        [attr: string]: string;
+    },
+}
 
 // TODO: import RehypeSvimgOptions from rehype-svimg
 interface RehypeSvimgOptions {
@@ -18,11 +27,54 @@ interface RehypeSvimgOptions {
     width?: number;
 }
 
+interface RehypePluginOptions extends RehypeSvimgOptions {
+    processingQueue: ImageProcessingQueue;
+}
+
 interface MarkdownSvimgOptions {
     files: string | string[];
     includeImg?: boolean;
     frontMatterImageKeys?: string[];
     rehypeOptions: RehypeSvimgOptions | ((input: { file: string }) => RehypeSvimgOptions)
+}
+
+function rehypePlugin(options: RehypePluginOptions): Transformer {
+
+    return async function transformer(tree, file): Promise<Node> {
+        const imageNodes: ImageNode[] = [];
+
+        visit(tree, { type: 'element', tagName: 'img' }, (node: Node) => {
+            imageNodes.push(node as any as ImageNode);
+        });
+
+        for (const node of imageNodes) {
+            if (!(node.properties && node.properties.src)) {
+                continue;
+            }
+
+            const src = node.properties.src;
+
+            let width: number | undefined;
+            if (node.properties.width) {
+                if (/^[0-9]+$/.test(node.properties.width)) {
+                    width = parseInt(node.properties.width, 10);
+                }
+            } else if (options?.width) {
+                width = options.width;
+            }
+
+            await options.processingQueue.process({
+                inputFile: join(options.inputDir, src),
+                outputDir: join(options.outputDir, dirname(src)),
+                options: {
+                    webp: options.webp,
+                    widths: width ? [width] : undefined,
+                }
+            });
+        }
+
+        return tree;
+    }
 }
 
 export default function markdownSvimg(options: MarkdownSvimgOptions) {
@@ -54,9 +106,9 @@ export default function markdownSvimg(options: MarkdownSvimgOptions) {
                 } else {
                     processor = processor.use(remark2rehype).use(html);
                 }
-                processor = processor.use(rehypeSvimg, {
+                processor = processor.use(rehypePlugin, {
                     ...opts,
-                    generateImages: true,
+                    processingQueue
                 });
 
                 await processor.process(data.content);
