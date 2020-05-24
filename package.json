@@ -33,8 +33,18 @@
   },
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^14.0.5",
     "rollup": "^2.10.8",
     "rollup-plugin-typescript2": "^0.27.1",
     "typescript": "^3.9.3"
+  },
+  "dependencies": {
+    "globby": "^11.0.0",
+    "gray-matter": "^4.0.2",
+    "rehype-raw": "^4.0.2",
+    "rehype-stringify": "^7.0.0",
+    "remark-parse": "^8.0.2",
+    "remark-rehype": "^7.0.0",
+    "unified": "^9.0.0"
   }
 }
