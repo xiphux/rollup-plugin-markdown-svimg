@@ -43,14 +43,14 @@ export default function markdownSvimg(options: MarkdownSvimgOptions) {
 
                 let processor = unified().use(markdown);
                 if (options.includeImg) {
-                    processor = processor.use(remark2rehype, { allowDangerousHtml: true }).use(raw).use(html);
+                    processor = processor.use(remark2rehype, { allowDangerousHtml: true }).use(raw);
                 } else {
-                    processor = processor.use(remark2rehype).use(html);
+                    processor = processor.use(remark2rehype);
                 }
                 processor = processor.use(rehypeSvimgProcess, {
                     ...opts,
                     queue,
-                });
+                }).use(html);
 
                 const promises: Array<Promise<any>> = [
                     processor.process(data.content),
