@@ -76,7 +76,6 @@ export default function markdownSvimg(options: MarkdownSvimgOptions) {
                                 queue,
                                 {
                                     webp: opts.webp,
-                                    widths: opts && opts.width ? [opts.width] : undefined,
                                     skipGeneration: false,
                                 }
                             );

@@ -347,7 +347,6 @@ describe('markdownSvimg', () => {
             { enqueue },
             {
                 webp: false,
-                widths: [500],
                 skipGeneration: false,
             }
         );
@@ -357,7 +356,6 @@ describe('markdownSvimg', () => {
             { enqueue },
             {
                 webp: false,
-                widths: [500],
                 skipGeneration: false,
             }
         );
