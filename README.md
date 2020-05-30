@@ -87,7 +87,7 @@ This example would process the image files in `static/images/posts/2020-01-01/{s
 
 ### Front Matter
 
-Image urls in front matter can also be processed with the `frontMatterImageKeys` option. Front matter image urls will also respect the srcPrefix option if specified.
+Image urls in front matter can also be processed with the `frontMatterKeys` option. Front matter image urls will also respect the srcPrefix option if specified.
 
 ```markdown
 ---
@@ -109,7 +109,7 @@ export default {
                 inputDir: 'static',
                 outputDir: 'static/g',
                 webp: true,
-                frontMatterImageKeys: ['image'],
+                frontMatterKeys: ['image'],
             }
         })
     ]
@@ -125,7 +125,7 @@ export default {
 | files          | *required*    | A [minimatch](https://github.com/isaacs/minimatch#usage) glob pattern or array of glob patterns for markdown files to process
 | rehypeOptions  | *required*    | An object or function that returns an object of [rehype-svimg](https://github.com/xiphux/rehype-svimg/) options. The function receives one parameter, an object with a `file` property with the current markdown file path being processed.
 | includeImg     | false         | Set to true to also process inline `<img>` tags in the markdown
-| frontMatterImageKeys |         | An array of front matter keys with image urls to process
+| frontMatterKeys |         | An array of front matter keys with image urls to process
 
 ## Built With
 

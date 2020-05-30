@@ -281,7 +281,7 @@ describe('markdownSvimg', () => {
 
         const plugin = markdownSvimg({
             files: 'data/*.md',
-            frontMatterImageKeys: ['image', 'image2'],
+            frontMatterKeys: ['image', 'image2'],
             rehypeOptions: {
                 inputDir: 'static',
                 outputDir: 'static/g',
@@ -327,7 +327,7 @@ describe('markdownSvimg', () => {
 
         const plugin = markdownSvimg({
             files: 'data/*.md',
-            frontMatterImageKeys: ['image', 'image2'],
+            frontMatterKeys: ['image', 'image2'],
             rehypeOptions: {
                 inputDir: 'static',
                 outputDir: 'static/g',
@@ -379,7 +379,7 @@ describe('markdownSvimg', () => {
 
         const plugin = markdownSvimg({
             files: 'data/*.md',
-            frontMatterImageKeys: ['image', 'image2'],
+            frontMatterKeys: ['image', 'image2'],
             rehypeOptions: {
                 inputDir: 'static',
                 outputDir: 'static/g',
@@ -426,7 +426,7 @@ describe('markdownSvimg', () => {
 
         const plugin = markdownSvimg({
             files: 'data/*.md',
-            frontMatterImageKeys: ['image', 'image2'],
+            frontMatterKeys: ['image', 'image2'],
             rehypeOptions: {
                 inputDir: 'static',
                 outputDir: 'static/g',

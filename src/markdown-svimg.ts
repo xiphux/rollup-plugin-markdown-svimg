@@ -14,7 +14,7 @@ import rehypeSvimgProcess from './rehype-svimg-process';
 interface MarkdownSvimgOptions {
     files: string | string[];
     includeImg?: boolean;
-    frontMatterImageKeys?: string[];
+    frontMatterKeys?: string[];
     rehypeOptions: RehypeSvimgOptions | ((input: { file: string }) => RehypeSvimgOptions)
 }
 
@@ -58,8 +58,8 @@ export default function markdownSvimg(options: MarkdownSvimgOptions) {
 
                 const promises: Array<Promise<any>> = [
                     processor.process(data.content),
-                    ...(options?.frontMatterImageKeys?.length ?
-                        options.frontMatterImageKeys.map(async (key) => {
+                    ...(options?.frontMatterKeys?.length ?
+                        options.frontMatterKeys.map(async (key) => {
                             let image = data.data[key];
 
                             if (!image) {
