@@ -25,12 +25,19 @@ export default function rehypeSvimgProcess(options: RehypeSvimgProcessOptions): 
             imageNodes.push(node as any as ImageNode);
         });
 
+        if (options.srcPrefix && !options.srcPrefix.endsWith('/')) {
+            options.srcPrefix += '/';
+        }
+
         await Promise.all(imageNodes.map(async (node) => {
             if (!(node.properties && node.properties.src)) {
                 return;
             }
 
-            const src = node.properties.src;
+            let src = node.properties.src;
+            if (options.srcPrefix) {
+                src = options.srcPrefix + src;
+            }
 
             let width: number | undefined;
             if (node.properties.width) {

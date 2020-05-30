@@ -52,14 +52,22 @@ export default function markdownSvimg(options: MarkdownSvimgOptions) {
                     queue,
                 }).use(html);
 
+                if (opts.srcPrefix && !opts.srcPrefix.endsWith('/')) {
+                    opts.srcPrefix += '/';
+                }
+
                 const promises: Array<Promise<any>> = [
                     processor.process(data.content),
                     ...(options?.frontMatterImageKeys?.length ?
                         options.frontMatterImageKeys.map(async (key) => {
-                            const image = data.data[key];
+                            let image = data.data[key];
 
                             if (!image) {
                                 return;
+                            }
+
+                            if (opts.srcPrefix) {
+                                image = opts.srcPrefix + image;
                             }
 
                             await processImage(

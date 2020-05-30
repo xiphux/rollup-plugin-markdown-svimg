@@ -133,6 +133,48 @@ describe('markdownSvimg', () => {
         expect(process).toHaveBeenCalledWith('two');
     });
 
+    it('processes globbed files with src prefix', async () => {
+        (globby as any as jest.Mock).mockImplementation(() => Promise.resolve([
+            'data/one.md',
+            'data/two.md',
+        ]));
+        enqueue.mockImplementationOnce(() => Promise.resolve('rawone')).mockImplementationOnce(() => Promise.resolve('rawtwo'));
+        (matter as any as jest.Mock).mockReturnValueOnce({
+            data: { one: true },
+            content: 'one',
+        }).mockReturnValueOnce({
+            data: { two: true },
+            content: 'two',
+        });
+
+        const plugin = markdownSvimg({
+            files: 'data/*.md',
+            rehypeOptions: {
+                inputDir: 'static',
+                outputDir: 'static/g',
+                srcPrefix: 'images/posts'
+            }
+        });
+        await plugin.buildEnd();
+        expect(globby).toHaveBeenCalledWith('data/*.md');
+        expect(enqueue).toHaveBeenCalledWith(fs.promises.readFile, 'data/one.md');
+        expect(enqueue).toHaveBeenCalledWith(fs.promises.readFile, 'data/two.md');
+        expect(matter).toHaveBeenCalledWith('rawone');
+        expect(matter).toHaveBeenCalledWith('rawtwo');
+        expect(unified).toHaveBeenCalled();
+        expect(use).toHaveBeenCalledWith(markdown);
+        expect(use).toHaveBeenCalledWith(remark2rehype);
+        expect(use).toHaveBeenCalledWith(rehypeSvimgProcess, {
+            inputDir: 'static',
+            outputDir: 'static/g',
+            queue: { enqueue },
+            srcPrefix: 'images/posts',
+        });
+        expect(use).toHaveBeenCalledWith(html);
+        expect(process).toHaveBeenCalledWith('one');
+        expect(process).toHaveBeenCalledWith('two');
+    });
+
     it('processes globbed files with raw html', async () => {
         (globby as any as jest.Mock).mockImplementation(() => Promise.resolve([
             'data/one.md',
@@ -316,6 +358,100 @@ describe('markdownSvimg', () => {
             {
                 webp: false,
                 widths: [500],
+                skipGeneration: false,
+            }
+        );
+    });
+
+    it('processes globbed files with front matter keys with src prefix', async () => {
+        (globby as any as jest.Mock).mockImplementation(() => Promise.resolve([
+            'data/one.md',
+            'data/two.md',
+        ]));
+        enqueue.mockImplementationOnce(() => Promise.resolve('rawone')).mockImplementationOnce(() => Promise.resolve('rawtwo'));
+        (matter as any as jest.Mock).mockReturnValueOnce({
+            data: { image: 'image1.jpg' },
+            content: 'one',
+        }).mockReturnValueOnce({
+            data: { image2: 'image2.jpg' },
+            content: 'two',
+        });
+
+        const plugin = markdownSvimg({
+            files: 'data/*.md',
+            frontMatterImageKeys: ['image', 'image2'],
+            rehypeOptions: {
+                inputDir: 'static',
+                outputDir: 'static/g',
+                srcPrefix: 'images/posts',
+            }
+        });
+        await plugin.buildEnd();
+        expect(globby).toHaveBeenCalledWith('data/*.md');
+        expect(enqueue).toHaveBeenCalledWith(fs.promises.readFile, 'data/one.md');
+        expect(enqueue).toHaveBeenCalledWith(fs.promises.readFile, 'data/two.md');
+        expect(matter).toHaveBeenCalledWith('rawone');
+        expect(matter).toHaveBeenCalledWith('rawtwo');
+        expect(processImage).toHaveBeenCalledWith(
+            join('static', 'images', 'posts', 'image1.jpg'),
+            join('static', 'g', 'images', 'posts'),
+            { enqueue },
+            {
+                skipGeneration: false,
+            }
+        );
+        expect(processImage).toHaveBeenCalledWith(
+            join('static', 'images', 'posts', 'image2.jpg'),
+            join('static', 'g', 'images', 'posts'),
+            { enqueue },
+            {
+                skipGeneration: false,
+            }
+        );
+    });
+
+    it('processes globbed files with front matter keys with src prefix with trailing slash', async () => {
+        (globby as any as jest.Mock).mockImplementation(() => Promise.resolve([
+            'data/one.md',
+            'data/two.md',
+        ]));
+        enqueue.mockImplementationOnce(() => Promise.resolve('rawone')).mockImplementationOnce(() => Promise.resolve('rawtwo'));
+        (matter as any as jest.Mock).mockReturnValueOnce({
+            data: { image: 'image1.jpg' },
+            content: 'one',
+        }).mockReturnValueOnce({
+            data: { image2: 'image2.jpg' },
+            content: 'two',
+        });
+
+        const plugin = markdownSvimg({
+            files: 'data/*.md',
+            frontMatterImageKeys: ['image', 'image2'],
+            rehypeOptions: {
+                inputDir: 'static',
+                outputDir: 'static/g',
+                srcPrefix: 'images/posts/',
+            }
+        });
+        await plugin.buildEnd();
+        expect(globby).toHaveBeenCalledWith('data/*.md');
+        expect(enqueue).toHaveBeenCalledWith(fs.promises.readFile, 'data/one.md');
+        expect(enqueue).toHaveBeenCalledWith(fs.promises.readFile, 'data/two.md');
+        expect(matter).toHaveBeenCalledWith('rawone');
+        expect(matter).toHaveBeenCalledWith('rawtwo');
+        expect(processImage).toHaveBeenCalledWith(
+            join('static', 'images', 'posts', 'image1.jpg'),
+            join('static', 'g', 'images', 'posts'),
+            { enqueue },
+            {
+                skipGeneration: false,
+            }
+        );
+        expect(processImage).toHaveBeenCalledWith(
+            join('static', 'images', 'posts', 'image2.jpg'),
+            join('static', 'g', 'images', 'posts'),
+            { enqueue },
+            {
                 skipGeneration: false,
             }
         );
