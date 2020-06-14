@@ -17,6 +17,20 @@ interface ImageNode {
     },
 }
 
+function getIntOption(props: { [attr: string]: string }, options: RehypeSvimgProcessOptions, prop: 'width' | 'blur' | 'quality'): number | undefined {
+    const propVal = props[prop];
+
+    if (propVal) {
+        if (/^[0-9]+$/.test(propVal)) {
+            return parseInt(propVal, 10);
+        }
+    } else if (options && options[prop]) {
+        return options[prop];
+    }
+
+    return undefined;
+}
+
 export default function rehypeSvimgProcess(options: RehypeSvimgProcessOptions): Transformer {
     return async function transformer(tree, file): Promise<Node> {
         const imageNodes: ImageNode[] = [];
@@ -39,14 +53,8 @@ export default function rehypeSvimgProcess(options: RehypeSvimgProcessOptions): 
                 src = options.srcPrefix + src;
             }
 
-            let width: number | undefined;
-            if (node.properties.width) {
-                if (/^[0-9]+$/.test(node.properties.width)) {
-                    width = parseInt(node.properties.width, 10);
-                }
-            } else if (options?.width) {
-                width = options.width;
-            }
+            const width = getIntOption(node.properties, options, 'width');
+            const quality = getIntOption(node.properties, options, 'quality');
 
             await processImage(
                 join(options.inputDir, src),
@@ -55,6 +63,7 @@ export default function rehypeSvimgProcess(options: RehypeSvimgProcessOptions): 
                 {
                     webp: options.webp,
                     widths: width ? [width] : undefined,
+                    quality
                 }
             );
         }));
