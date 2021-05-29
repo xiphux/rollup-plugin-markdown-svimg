@@ -46,10 +46,10 @@
     "gray-matter": "^4.0.2",
     "rehype-raw": "^4.0.2",
     "rehype-stringify": "^7.0.0",
-    "rehype-svimg": "^0.2.0",
+    "rehype-svimg": "^0.3.0",
     "remark-parse": "^8.0.2",
     "remark-rehype": "^7.0.0",
-    "svimg": "^0.3.0",
+    "svimg": "^0.4.0",
     "unified": "^9.0.0",
     "unist-util-visit": "^2.0.2"
   }

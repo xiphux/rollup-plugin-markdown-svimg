@@ -22,7 +22,8 @@ export default {
             rehypeOptions: {
                 inputDir: 'static',
                 outputDir: 'static/g',
-                webp: true
+                webp: true,
+                avif: true
             }
         })
     ]
@@ -45,7 +46,8 @@ export default {
                 rehypeOptions: {
                     inputDir: 'static',
                     outputDir: 'static/g',
-                    webp: true
+                    webp: true,
+                    avif: true
                 }
             })
         ]
@@ -76,6 +78,7 @@ export default {
                 inputDir: 'static',
                 outputDir: 'static/g',
                 webp: true,
+                avif: true,
                 srcPrefix: join('images', dirname(file)),
             })
         })
@@ -109,6 +112,7 @@ export default {
                 inputDir: 'static',
                 outputDir: 'static/g',
                 webp: true,
+                avif: true,
                 frontMatterKeys: ['image'],
             }
         })

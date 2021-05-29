@@ -202,6 +202,7 @@ describe('rehypeSvimg', () => {
             inputDir: 'static',
             outputDir: 'static/g',
             webp: false,
+            avif: true,
             queue: queue as any,
         });
 
@@ -217,6 +218,7 @@ describe('rehypeSvimg', () => {
             queue,
             {
                 webp: false,
+                avif: true,
             }
         );
         expect(processImage).toHaveBeenCalledWith(
@@ -225,6 +227,143 @@ describe('rehypeSvimg', () => {
             queue,
             {
                 webp: false,
+                avif: true,
+            }
+        );
+    });
+
+    it('processes img elements without avif', async () => {
+        const node1 = {
+            type: 'element',
+            tagName: 'img',
+            properties: {
+                src: 'images/posts/2020-03-14/test-layer-1.jpg',
+                alt: 'Test layer 1',
+            },
+            children: [] as any,
+            position: {
+                start: { line: 29, column: 5, offset: 2214 },
+                end: { line: 29, column: 64, offset: 2273 }
+            }
+        };
+        const node2 = {
+            type: 'element',
+            tagName: 'img',
+            properties: {
+                src: 'images/posts/2020-03-14/test-layer-2.jpg',
+                alt: 'Test layer 2',
+            },
+            children: [] as any,
+            position: {
+                start: { line: 29, column: 5, offset: 2214 },
+                end: { line: 29, column: 64, offset: 2273 }
+            }
+        };
+        const queue = { enqueue: jest.fn() };
+        (visit as any as jest.Mock).mockImplementation((node: any, test: any, visitor: Function) => {
+            visitor(node1);
+            visitor(node2);
+        });
+        const tree = { tree: true };
+
+        const transformer = rehypeSvimgProcess({
+            inputDir: 'static',
+            outputDir: 'static/g',
+            webp: true,
+            avif: false,
+            queue: queue as any,
+        });
+
+        expect(await transformer(tree as any, {} as any)).toEqual(tree);
+
+        expect(visit).toHaveBeenCalledWith(tree, { type: 'element', tagName: 'img' }, expect.any(Function));
+
+        expect(processImage).toHaveBeenCalledTimes(2);
+        expect(processImage).toHaveBeenCalledTimes(2);
+        expect(processImage).toHaveBeenCalledWith(
+            join('static', 'images', 'posts', '2020-03-14', 'test-layer-1.jpg'),
+            join('static', 'g', 'images', 'posts', '2020-03-14'),
+            queue,
+            {
+                webp: true,
+                avif: false,
+            }
+        );
+        expect(processImage).toHaveBeenCalledWith(
+            join('static', 'images', 'posts', '2020-03-14', 'test-layer-2.jpg'),
+            join('static', 'g', 'images', 'posts', '2020-03-14'),
+            queue,
+            {
+                webp: true,
+                avif: false,
+            }
+        );
+    });
+
+    it('processes img elements without webp or avif', async () => {
+        const node1 = {
+            type: 'element',
+            tagName: 'img',
+            properties: {
+                src: 'images/posts/2020-03-14/test-layer-1.jpg',
+                alt: 'Test layer 1',
+            },
+            children: [] as any,
+            position: {
+                start: { line: 29, column: 5, offset: 2214 },
+                end: { line: 29, column: 64, offset: 2273 }
+            }
+        };
+        const node2 = {
+            type: 'element',
+            tagName: 'img',
+            properties: {
+                src: 'images/posts/2020-03-14/test-layer-2.jpg',
+                alt: 'Test layer 2',
+            },
+            children: [] as any,
+            position: {
+                start: { line: 29, column: 5, offset: 2214 },
+                end: { line: 29, column: 64, offset: 2273 }
+            }
+        };
+        const queue = { enqueue: jest.fn() };
+        (visit as any as jest.Mock).mockImplementation((node: any, test: any, visitor: Function) => {
+            visitor(node1);
+            visitor(node2);
+        });
+        const tree = { tree: true };
+
+        const transformer = rehypeSvimgProcess({
+            inputDir: 'static',
+            outputDir: 'static/g',
+            webp: false,
+            avif: false,
+            queue: queue as any,
+        });
+
+        expect(await transformer(tree as any, {} as any)).toEqual(tree);
+
+        expect(visit).toHaveBeenCalledWith(tree, { type: 'element', tagName: 'img' }, expect.any(Function));
+
+        expect(processImage).toHaveBeenCalledTimes(2);
+        expect(processImage).toHaveBeenCalledTimes(2);
+        expect(processImage).toHaveBeenCalledWith(
+            join('static', 'images', 'posts', '2020-03-14', 'test-layer-1.jpg'),
+            join('static', 'g', 'images', 'posts', '2020-03-14'),
+            queue,
+            {
+                webp: false,
+                avif: false,
+            }
+        );
+        expect(processImage).toHaveBeenCalledWith(
+            join('static', 'images', 'posts', '2020-03-14', 'test-layer-2.jpg'),
+            join('static', 'g', 'images', 'posts', '2020-03-14'),
+            queue,
+            {
+                webp: false,
+                avif: false,
             }
         );
     });

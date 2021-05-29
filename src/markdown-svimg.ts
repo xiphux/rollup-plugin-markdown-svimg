@@ -76,6 +76,7 @@ export default function markdownSvimg(options: MarkdownSvimgOptions) {
                                 queue,
                                 {
                                     webp: opts.webp,
+                                    avif: opts.avif,
                                     skipGeneration: false,
                                 }
                             );

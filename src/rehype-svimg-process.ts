@@ -62,6 +62,7 @@ export default function rehypeSvimgProcess(options: RehypeSvimgProcessOptions): 
                 options.queue,
                 {
                     webp: options.webp,
+                    avif: options.avif,
                     widths: width ? [width] : undefined,
                     quality
                 }

@@ -332,6 +332,7 @@ describe('markdownSvimg', () => {
                 inputDir: 'static',
                 outputDir: 'static/g',
                 webp: false,
+                avif: false,
                 width: 500,
             }
         });
@@ -347,6 +348,7 @@ describe('markdownSvimg', () => {
             { enqueue },
             {
                 webp: false,
+                avif: false,
                 skipGeneration: false,
             }
         );
@@ -356,6 +358,7 @@ describe('markdownSvimg', () => {
             { enqueue },
             {
                 webp: false,
+                avif: false,
                 skipGeneration: false,
             }
         );
